@@ -74,4 +74,8 @@
   const cards=[...document.querySelectorAll('.card')];
   const naturalistCard=cards.find(c=>c.textContent.includes('Naturalist'));
   if(naturalistCard&&naturalistCard.parentNode){naturalistCard.insertAdjacentElement('afterend',wrap)}else{(document.querySelector('.grid')||document.querySelector('.wrap')||document.body).appendChild(wrap)}
+
+  const moonshineBuyers=document.createElement('script');
+  moonshineBuyers.src='./moonshine-buyers.js?v=1';
+  document.body.appendChild(moonshineBuyers);
 })();
