@@ -23,16 +23,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Load Naturalist tracker module
+      - name: Load tracker modules
         run: |
           python - <<'PY'
           from pathlib import Path
           p = Path('index.html')
           s = p.read_text()
-          tag = '<script src="./naturalist.js"></script>'
-          if tag not in s:
-              s = s.replace('</body>', tag + '</body>')
-              p.write_text(s)
+          tags = [
+              '<script src="./naturalist.js"></script>',
+              '<script src="./legendary-advisor.js"></script>'
+          ]
+          for tag in tags:
+              if tag not in s:
+                  s = s.replace('</body>', tag + '</body>')
+          p.write_text(s)
           PY
       - name: Setup Pages
         uses: actions/configure-pages@v5
