@@ -31,7 +31,8 @@ jobs:
           s = p.read_text()
           tags = [
               '<script src="./naturalist.js"></script>',
-              '<script src="./legendary-advisor.js"></script>'
+              '<script src="./legendary-advisor.js"></script>',
+              '<script src="./legendary-collection.js"></script>'
           ]
           for tag in tags:
               if tag not in s:
