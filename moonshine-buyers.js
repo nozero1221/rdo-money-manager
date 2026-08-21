@@ -1,7 +1,7 @@
 (()=>{
   if(window.__rdoMoonshineBuyersLoaded)return;window.__rdoMoonshineBuyersLoaded=true;
-  const KEY='rdo_moonshine_buyers_v1';
-  let state={eddie:false,hal:false,hank:false,other:false,otherName:'',lastTimer:''};
+  const KEY='rdo_moonshine_buyers_v2';
+  let state={eddie:false,hal:false,hank:false,lewis:false,mo:false,other:false,otherName:'',lastTimer:''};
   try{state={...state,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch(e){}
   const save=()=>localStorage.setItem(KEY,JSON.stringify(state));
   const style=document.createElement('style');
@@ -15,19 +15,22 @@
   const box=document.createElement('div');box.className='mbBox';
   box.innerHTML=`
     <div class="mbHead"><b>👥 Moonshine Buyers</b><span class="mbStatus" id="mbStatus">CHECK MENU</span></div>
-    <div class="mbNote">Buyer availability is semi-random. Mark the preferred buyers you currently see in Marcel's menu. Bert Higgins is always available but pays less.</div>
+    <div class="mbNote">The game does not publish your lobby's live preferred-buyer list. Mark the buyers Marcel currently shows. These are known Berry Cobbler-compatible buyers; Bert Higgins is the fallback buyer and pays less.</div>
     <div class="mbList">
-      <div class="mbBuyer"><label><input type="checkbox" data-buyer="eddie"> Eddie Bray</label><small>Berry Cobbler preferred</small></div>
-      <div class="mbBuyer"><label><input type="checkbox" data-buyer="hal"> Hal Baker</label><small>Berry Cobbler preferred</small></div>
-      <div class="mbBuyer"><label><input type="checkbox" data-buyer="hank"> Hank Andrews</label><small>Berry Cobbler preferred</small></div>
-      <div class="mbBuyer"><label><input type="checkbox" data-buyer="other"> Other preferred buyer</label><small>Use if your menu shows another name</small></div>
-      <div class="mbBuyer"><div><b>Bert Higgins</b><br><small>Always available • lower payout</small></div><small>LAST RESORT</small></div>
+      <div class="mbBuyer"><label><input type="checkbox" data-buyer="eddie"> Eddie Bray</label><small>Berry Cobbler compatible</small></div>
+      <div class="mbBuyer"><label><input type="checkbox" data-buyer="hal"> Hal Baker</label><small>Berry Cobbler compatible</small></div>
+      <div class="mbBuyer"><label><input type="checkbox" data-buyer="hank"> Hank Andrews</label><small>Berry Cobbler compatible</small></div>
+      <div class="mbBuyer"><label><input type="checkbox" data-buyer="lewis"> Lewis Wells</label><small>Berry Cobbler compatible</small></div>
+      <div class="mbBuyer"><label><input type="checkbox" data-buyer="mo"> Mo Carlyle</label><small>Berry Cobbler compatible</small></div>
+      <div class="mbBuyer"><label><input type="checkbox" data-buyer="other"> Other preferred buyer</label><small>Use if Marcel shows another name</small></div>
+      <div class="mbBuyer"><div><b>Bert Higgins</b><br><small>Always available • lower payout</small></div><small>FALLBACK</small></div>
     </div>
     <div class="mbOther"><input id="mbOtherName" placeholder="Other buyer name (optional)"></div>
-    <div class="mbAdvice" id="mbAdvice">Open Marcel's buyer list and mark who is available now.</div>
+    <div class="mbAdvice" id="mbAdvice">Open Marcel's buyer list and mark who is available in your current cycle.</div>
   `;
   moon.appendChild(box);
-  const buyers=['eddie','hal','hank','other'];
+  const buyers=['eddie','hal','hank','lewis','mo','other'];
+  const labels={eddie:'Eddie Bray',hal:'Hal Baker',hank:'Hank Andrews',lewis:'Lewis Wells',mo:'Mo Carlyle'};
   buyers.forEach(k=>{const el=box.querySelector(`[data-buyer="${k}"]`);el.checked=!!state[k];el.addEventListener('change',()=>{state[k]=el.checked;save();render()})});
   const otherName=box.querySelector('#mbOtherName');otherName.value=state.otherName||'';otherName.addEventListener('input',()=>{state.otherName=otherName.value.trim();save();render()});
   const preferred=()=>buyers.filter(k=>state[k]);
@@ -39,12 +42,12 @@
     const timer=document.getElementById('buyerTimer')?.textContent||'--:--';
     const active=preferred();
     if(active.length){
-      const names=active.map(k=>k==='eddie'?'Eddie Bray':k==='hal'?'Hal Baker':k==='hank'?'Hank Andrews':(state.otherName||'Other preferred buyer'));
+      const names=active.map(k=>k==='other'?(state.otherName||'Other preferred buyer'):labels[k]);
       status.textContent='PREFERRED AVAILABLE';status.className='mbStatus good';
-      advice.className='mbAdvice good';advice.innerHTML=`<b>${batch.includes('READY')?'SELL NOW':'Buyer available'}:</b> ${names.join(', ')}${timer!=='--:--'?`<br>Buyer reset timer: <b>${timer}</b>`:''}`;
+      advice.className='mbAdvice good';advice.innerHTML=`<b>${batch.includes('READY')?'SELL NOW':'Available now'}:</b> ${names.join(', ')}${timer!=='--:--'?`<br>Buyer reset timer: <b>${timer}</b>`:''}`;
     }else{
-      status.textContent='NO PREFERRED MARKED';status.className='mbStatus warn';advice.className='mbAdvice warn';
-      advice.innerHTML=recipe==='Berry Cobbler'?`<b>Berry Cobbler:</b> re-check Marcel's buyer list. If only Bert is available, waiting for the next reset usually protects your better payout.${timer!=='--:--'?`<br>Buyer reset timer: <b>${timer}</b>`:''}`:`<b>${recipe}:</b> check the in-game buyer list for a preferred buyer before selling.${timer!=='--:--'?`<br>Buyer reset timer: <b>${timer}</b>`:''}`;
+      status.textContent='NONE MARKED';status.className='mbStatus warn';advice.className='mbAdvice warn';
+      advice.innerHTML=recipe==='Berry Cobbler'?`<b>Berry Cobbler:</b> check Marcel's buyer list. If your preferred buyer is missing, use the reset timer to know when to check again.${timer!=='--:--'?`<br>Buyer reset timer: <b>${timer}</b>`:''}`:`<b>${recipe}:</b> check Marcel's buyer list for a preferred buyer.${timer!=='--:--'?`<br>Buyer reset timer: <b>${timer}</b>`:''}`;
     }
   }
   setInterval(()=>{
