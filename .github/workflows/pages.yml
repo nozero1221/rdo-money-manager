@@ -27,6 +27,8 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+
+          # Red Dead tracker modules
           p = Path('index.html')
           s = p.read_text()
           tags = [
@@ -38,6 +40,15 @@ jobs:
               if tag not in s:
                   s = s.replace('</body>', tag + '</body>')
           p.write_text(s)
+
+          # GTA tracker modules
+          gta = Path('gta/index.html')
+          if gta.exists():
+              g = gta.read_text()
+              tag = '<script src="./login-plan.js"></script>'
+              if tag not in g:
+                  g = g.replace('</body>', tag + '</body>')
+              gta.write_text(g)
           PY
       - name: Setup Pages
         uses: actions/configure-pages@v5
