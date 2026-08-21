@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07140d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>GTA Online Money Manager</title>
+<style>
+:root{--bg:#06100a;--card:#0e1c13;--card2:#12261a;--line:#2d4837;--text:#f2fbf4;--muted:#a7b9ac;--green:#74df93;--yellow:#efc96e;--red:#ff8178;--blue:#79bcff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#183d27 0,#08150e 38%,#050c08 80%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}.wrap{max-width:820px;margin:auto;padding:12px 12px 50px}
+.hero{background:rgba(9,23,15,.96);border:1px solid var(--line);border-radius:20px;padding:15px;box-shadow:0 14px 32px #0007}.hero h1{font-size:22px;margin:0}.sub,.mini{font-size:11px;line-height:1.45;color:var(--muted)}
+.nexts{display:grid;gap:7px;margin-top:12px}.next{background:#123322;border:1px solid #3d7751;border-radius:13px;padding:10px}.next:nth-child(n+2){background:#0a1710;border-color:var(--line)}.rank{font-size:10px;font-weight:900;color:var(--green)}.action{font-size:16px;font-weight:900}.why{font-size:11px;color:var(--muted)}
+.tabs{display:flex;gap:7px;overflow:auto;margin-top:11px}.tabs button{white-space:nowrap;min-height:34px;padding:8px 10px}
+.section{font-size:12px;color:var(--green);font-weight:900;text-transform:uppercase;letter-spacing:.08em;margin:18px 2px 8px}.grid{display:grid;gap:10px}.card{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:17px;padding:14px}.title{display:flex;justify-content:space-between;gap:8px;align-items:center;font-weight:900}.badge{font-size:10px;border:1px solid var(--line);border-radius:999px;padding:5px 8px;color:var(--muted);white-space:nowrap}.ready{color:#c8f8d4;background:#14361f}.cool{color:#ffe3a2;background:#3a2c0d}.hot{color:#fff;background:#642824;border-color:#9f4e46}.info{color:#c6e2ff;background:#132a3c}
+.timer{font-size:30px;font-weight:900;font-variant-numeric:tabular-nums;margin:9px 0 3px}.split{display:grid;grid-template-columns:1fr 1fr;gap:7px}.buttons{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}.one{grid-template-columns:1fr}
+button,input,select{font:inherit}button{min-height:44px;border:0;border-radius:12px;background:var(--green);color:#06110a;font-weight:900;padding:10px}button.secondary{background:#1a2d21;color:var(--text);border:1px solid var(--line)}button.danger{background:#672b27;color:#fff}
+.field{margin-top:9px}.field label{display:block;font-size:11px;color:var(--muted);font-weight:800;margin-bottom:5px}input,select{width:100%;border:1px solid var(--line);border-radius:11px;background:#07110b;color:var(--text);padding:10px}input[type=checkbox]{width:auto;transform:scale(1.2)}
+.tog{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);background:#09160f;border-radius:11px;padding:10px;margin-top:8px}.list{display:grid;gap:7px;margin-top:9px}.item{border:1px solid var(--line);background:#09160f;border-radius:12px;padding:10px}.check{display:flex;gap:9px;align-items:flex-start}.check input{margin-top:3px}.item b{font-size:13px}.item p{margin:4px 0 0;color:var(--muted);font-size:11px;line-height:1.4}
+.route{padding:11px;border-left:3px solid var(--green);background:#09170f;border-radius:10px;margin-top:9px;line-height:1.5;font-size:12px}.note{padding:10px;border:1px solid #665125;background:#2b230e;border-radius:12px;color:#ffe9b3;font-size:11px;line-height:1.45;margin-top:9px}
+details{border:1px solid var(--line);background:#08140d;border-radius:12px;margin-top:9px;overflow:hidden}summary{padding:12px;font-weight:900;cursor:pointer;list-style:none}summary::-webkit-details-marker{display:none}.body{padding:0 12px 12px;font-size:12px;line-height:1.55;color:#dce8df}.body ul,.body ol{padding-left:20px}.body li{margin:6px 0}
+.progress{height:8px;background:#071009;border:1px solid #263d30;border-radius:99px;overflow:hidden;margin-top:8px}.bar{height:100%;background:linear-gradient(90deg,#268f50,#75df94);width:0}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#f2fff5;color:#06110a;border-radius:999px;padding:9px 13px;font-weight:900;opacity:0;transition:.2s;z-index:20;max-width:90%;text-align:center}.toast.show{opacity:1}
+@media(max-width:480px){.split,.buttons{grid-template-columns:1fr}}
+</style>
+</head>
+<body><div class="wrap">
+<div class="hero">
+  <h1>💵 GTA Online Money Manager</h1>
+  <div class="sub">Phone-friendly tracker for your current setup: CEO + Agency + Kosatka/Cayo + Sparrow. Tap what you finish and it ranks your next three money moves.</div>
+  <div class="nexts">
+    <div class="next"><div class="rank">#1 DO THIS NEXT</div><div class="action" id="a1">Loading…</div><div class="why" id="w1"></div></div>
+    <div class="next"><div class="rank">#2 AFTER THAT</div><div class="action" id="a2">—</div><div class="why" id="w2"></div></div>
+    <div class="next"><div class="rank">#3 BACKUP</div><div class="action" id="a3">—</div><div class="why" id="w3"></div></div>
+  </div>
+  <div class="tabs">
+    <button class="secondary" onclick="go('timers')">Timers</button><button class="secondary" onclick="go('cayo')">Cayo</button>
+    <button class="secondary" onclick="go('agency')">Agency</button><button class="secondary" onclick="go('routes')">Routes</button><button class="secondary" onclick="go('roadmap')">Roadmap</button>
+  </div>
+</div>
+
+<div class="section" id="timers">Live cooldowns</div>
+<div class="grid">
+  <div class="card">
+    <div class="title"><span>🏝️ Cayo Perico</span><span class="badge ready" id="cayoBadge">READY</span></div>
+    <div class="split">
+      <div class="field"><label>Last finale</label><select id="cayoType" onchange="saveUI()"><option value="solo">Solo — 2h 24m cooldown</option><option value="team">Team — 48m cooldown</option></select></div>
+      <div class="field"><label>Current stage</label><select id="cayoStage" onchange="saveUI()"><option value="ready">Ready / no active run</option><option value="intel">Gather Intel</option><option value="preps">Doing preps</option><option value="finale">Finale ready</option></select></div>
+    </div>
+    <div class="timer" id="cayoTimer">00:00</div><div class="mini" id="cayoText"></div>
+    <div class="buttons"><button onclick="finishCayo()">Finished Cayo</button><button class="secondary" onclick="resetCayo()">Reset Cayo</button></div>
+    <div class="note">After the cooldown ends, the Hard Mode setup window lasts 48 minutes. The manager turns this into a separate countdown automatically.</div>
+  </div>
+
+  <div class="card">
+    <div class="title"><span>📋 Agency Security Contract</span><span class="badge ready" id="secBadge">READY</span></div>
+    <div class="timer" id="secTimer">00:00</div>
+    <div class="buttons one"><button onclick="finishSec()">Finished Contract</button></div>
+    <div class="mini">5-minute wait before another Security Contract.</div>
+  </div>
+
+  <div class="card">
+    <div class="title"><span>👔 VIP / CEO Work</span><span class="badge hot" id="vipBadge">5× LIVE</span></div>
+    <div class="timer" id="vipTimer">00:00</div>
+    <div class="buttons one"><button onclick="finishVip()">Finished VIP Work</button></div>
+    <div class="mini">5-minute wait before a different VIP Work; 10 minutes before repeating the same one.</div>
+  </div>
+
+  <div class="card">
+    <div class="title"><span>🎵 Dr. Dre VIP Contract</span><span class="badge info" id="dreBadge">WEEKLY OPEN</span></div>
+    <label class="tog"><span><b>First weekly host completion done?</b></span><input id="dreWeekly" type="checkbox" onchange="saveUI()"></label>
+    <div class="mini">2026 repeat finale payout: GTA$900,000. First host completion in the weekly cycle is about GTA$1.1M.</div>
+  </div>
+</div>
+
+<div class="section" id="cayo">Cayo control center</div>
+<div class="grid">
+  <div class="card">
+    <div class="title"><span>✅ Essential prep checklist</span><span class="badge info" id="prepBadge">0 / 5</span></div>
+    <div class="list">
+      <label class="item check"><input class="prep" data-k="intel" type="checkbox" onchange="prepChange()"><span><b>Gather Intel</b><p>Scope the primary target and the best solo-accessible secondary-loot area.</p></span></label>
+      <label class="item check"><input class="prep" data-k="approach" type="checkbox" onchange="prepChange()"><span><b>Longfin approach</b><p>Flexible solo approach for grabbing outside loot before the compound.</p></span></label>
+      <label class="item check"><input class="prep" data-k="tunnel" type="checkbox" onchange="prepChange()"><span><b>Drainage Tunnel equipment</b><p>Complete the equipment step required for the tunnel route.</p></span></label>
+      <label class="item check"><input class="prep" data-k="finger" type="checkbox" onchange="prepChange()"><span><b>Fingerprint equipment</b><p>Required for the compound objective.</p></span></label>
+      <label class="item check"><input class="prep" data-k="target" type="checkbox" onchange="prepChange()"><span><b>Primary-target prep</b><p>Complete whichever planning-board prep your current target requires.</p></span></label>
+    </div>
+    <div class="buttons"><button onclick="setFinale()">Mark finale ready</button><button class="secondary" onclick="resetPreps()">Reset checklist</button></div>
+    <div class="mini">For the clean solo route, optional disruption preps usually cost more time than they save.</div>
+  </div>
+
+  <div class="card">
+    <div class="title"><span>🧭 Solo route advisor</span><span class="badge ready">STEALTH</span></div>
+    <div class="field"><label>Best outside loot area you scoped</label><select id="lootArea" onchange="saveUI()"><option value="air">Airstrip</option><option value="north">North Dock</option><option value="main">Main Dock</option><option value="none">Go straight to compound</option></select></div>
+    <div class="route" id="routeText"></div>
+    <details><summary>Step-by-step route</summary><div class="body"><ol>
+      <li>Start with the Longfin and go to the best outside loot area you scoped.</li>
+      <li>Fill as much of the bag as practical without crossing the island for small gains.</li>
+      <li>Take the boat to the Drainage Tunnel and enter the compound.</li>
+      <li>Stay on a low-contact stealth path and avoid unnecessary detours.</li>
+      <li>Take the office-safe cash because it does not use bag capacity.</li>
+      <li>Collect the primary target, leave through the main gate, then head southwest toward the coast.</li>
+      <li>Swim away from the southwest side of the island until the escape triggers.</li>
+    </ol><p><b>Elite target:</b> full bag, no restarts, and under 15 minutes. A clean run is more important than forcing a risky shortcut.</p></div></details>
+    <details><summary>2026 payout note</summary><div class="body"><p>Cayo primary-target values and appearance rates were rebalanced in July 2026. The first scope-out after the weekly reset has better odds than extra runs that same week. Use the value shown on your current planning board for exact payout math.</p></div></details>
+  </div>
+</div>
+
+<div class="section" id="agency">Agency optimizer</div>
+<div class="grid">
+  <div class="card">
+    <div class="title"><span>🏢 Best Agency flow</span><span class="badge ready">SOLO</span></div>
+    <div class="route"><b>Security Contract → VIP Work during the wait → Security Contract → Cayo prep.</b> Do the Dr. Dre contract when you want a larger guaranteed payout block.</div>
+    <details><summary>Security Contract tips</summary><div class="body"><ul>
+      <li>Favor fast, straightforward contracts when optimizing money per minute.</li>
+      <li>Asset Protection is time-gated, so it is usually slower than the best alternatives.</li>
+      <li>Every 5 completed Security Contracts raises your Agency safe income by another GTA$500 per in-game day, up to GTA$20,000 after 201 completions.</li>
+    </ul></div></details>
+    <details><summary>Dr. Dre timing</summary><div class="body"><p>The repeat finale pays GTA$900,000 in 2026, while your first host completion each weekly cycle pays about GTA$1.1M. It fits best into a Cayo cooldown or a longer play session.</p></div></details>
+  </div>
+</div>
+
+<div class="section" id="routes">Session routes</div>
+<div class="grid">
+  <div class="card">
+    <div class="title"><span>⚡ Right now — Aug 21–23</span><span class="badge hot">5× VIP WORK</span></div>
+    <div class="route"><b>VIP Work → Agency filler → VIP Work → Cayo prep/finale when ready → repeat.</b> Use your Sparrow to reduce travel time. The 5× GTA$ + RP weekend ends after August 23, 2026.</div>
+  </div>
+  <div class="card">
+    <div class="title"><span>🕒 Normal 2–3 hour session</span><span class="badge ready">BALANCED</span></div>
+    <div class="route"><b>Login:</b> check Agency safe → check Cayo status → check weekly bonus.<br><br><b>Block A:</b> Cayo intel/preps/finale if available.<br><b>Block B:</b> Agency Security Contracts + VIP Work during Cayo cooldown.<br><b>Block C:</b> Dr. Dre if your first weekly completion is still open or you want a longer guaranteed payout.<br><b>Before logging off:</b> check whether Cayo's Hard Mode setup window is about to open.</div>
+  </div>
+</div>
+
+<div class="section" id="roadmap">Next purchases</div>
+<div class="grid">
+  <div class="card">
+    <div class="title"><span>🏗️ Solo-friendly roadmap</span><span class="badge info">CURRENT</span></div>
+    <label class="tog"><span><b>Garment Factory</b><div class="mini">GTA+ 60% off through Sep 9; FIB Files 2× for GTA+ this period</div></span><input id="garment" type="checkbox" onchange="saveUI()"></label>
+    <label class="tog"><span><b>Auto Shop</b><div class="mini">More solo contract variety</div></span><input id="autoshop" type="checkbox" onchange="saveUI()"></label>
+    <label class="tog"><span><b>Nightclub</b><div class="mini">Popularity-safe income + utility</div></span><input id="nightclub" type="checkbox" onchange="saveUI()"></label>
+    <div class="route" id="buyNext"></div>
+  </div>
+</div>
+
+<div class="section">Other owned-business status</div>
+<div class="grid">
+  <div class="card">
+    <div class="title"><span>📦 Generic stock tracker</span><span class="badge info" id="stockBadge">0%</span></div>
+    <div class="field"><label>Stock estimate (%)</label><input id="stock" type="range" min="0" max="100" value="0" oninput="stockChange(this.value)"></div>
+    <div class="progress"><div class="bar" id="stockBar"></div></div>
+    <div class="mini">This card is intentionally generic: use it only to remember the status of another business you already own.</div>
+  </div>
+</div>
+
+<div class="section">Settings</div>
+<div class="grid"><div class="card">
+  <div class="split"><div class="field"><label>Cash on hand (GTA$)</label><input id="cash" type="number" min="0" step="1000" value="2000000" onchange="saveUI()"></div><div class="field"><label>VIP Work multiplier</label><select id="vipMulti" onchange="saveUI()"><option>1</option><option>2</option><option>3</option><option>4</option><option selected>5</option></select></div></div>
+  <div class="buttons"><button class="secondary" onclick="resetWeekly()">Reset weekly checks</button><button class="danger" onclick="wipe()">Reset whole tracker</button></div>
+  <div class="mini">Saved locally in your browser. No Rockstar or PlayStation login is needed.</div>
+</div></div>
+</div><div class="toast" id="toast"></div>
+
+<script>
+const KEY='gta_money_manager_v2';
+const BASE={cayoEnd:0,hardEnd:0,cayoType:'solo',cayoStage:'ready',secEnd:0,vipEnd:0,dreWeekly:false,
+prep:{intel:false,approach:false,tunnel:false,finger:false,target:false},lootArea:'air',garment:false,autoshop:false,nightclub:false,stock:0,cash:2000000,vipMulti:5};
+let S=(()=>{try{return {...BASE,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch(e){return {...BASE}}})();S.prep={...BASE.prep,...(S.prep||{})};
+const $=i=>document.getElementById(i),now=()=>Date.now(),left=t=>Math.max(0,(t||0)-now());
+function fmt(ms){if(ms<=0)return'00:00';let s=Math.ceil(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),ss=s%60;return h?`${h}:${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`:`${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`}
+function save(){localStorage.setItem(KEY,JSON.stringify(S))}function toast(t){let x=$('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),1600)}function go(id){$(id).scrollIntoView({behavior:'smooth',block:'start'})}
+function pull(){S.cayoType=$('cayoType').value;S.cayoStage=$('cayoStage').value;S.dreWeekly=$('dreWeekly').checked;S.lootArea=$('lootArea').value;S.garment=$('garment').checked;S.autoshop=$('autoshop').checked;S.nightclub=$('nightclub').checked;S.cash=Math.max(0,+$('cash').value||0);S.vipMulti=+$('vipMulti').value||1}
+function sync(){$('cayoType').value=S.cayoType;$('cayoStage').value=S.cayoStage;$('dreWeekly').checked=S.dreWeekly;$('lootArea').value=S.lootArea;$('garment').checked=S.garment;$('autoshop').checked=S.autoshop;$('nightclub').checked=S.nightclub;$('stock').value=S.stock;$('cash').value=S.cash;$('vipMulti').value=String(S.vipMulti);document.querySelectorAll('.prep').forEach(x=>x.checked=!!S.prep[x.dataset.k])}
+function saveUI(){pull();save();render()}
+function finishCayo(){pull();let m=S.cayoType==='solo'?144:48;S.cayoEnd=now()+m*60000;S.hardEnd=S.cayoEnd+48*60000;S.cayoStage='ready';S.prep={...BASE.prep};save();sync();render();toast(`Cayo cooldown started: ${m} minutes`)}
+function resetCayo(){S.cayoEnd=0;S.hardEnd=0;save();render();toast('Cayo timer reset')}function finishSec(){S.secEnd=now()+5*60000;save();render();toast('5-minute Agency timer started')}function finishVip(){S.vipEnd=now()+5*60000;save();render();toast('5-minute VIP timer started')}
+function prepChange(){document.querySelectorAll('.prep').forEach(x=>S.prep[x.dataset.k]=x.checked);if(S.prep.intel&&S.cayoStage==='ready')S.cayoStage='preps';save();sync();render()}function resetPreps(){S.prep={...BASE.prep};save();sync();render();toast('Prep checklist reset')}function setFinale(){S.cayoStage='finale';save();sync();render();toast('Finale marked ready')}
+function stockChange(v){S.stock=Math.max(0,Math.min(100,+v||0));save();render()}function resetWeekly(){S.dreWeekly=false;save();sync();render();toast('Weekly check reset')}function wipe(){if(confirm('Reset all GTA Money Manager data on this device?')){S=JSON.parse(JSON.stringify(BASE));save();sync();render();toast('Tracker reset')}}
+function bonusLive(){let d=new Date(),a=new Date('2026-08-21T00:00:00-04:00'),b=new Date('2026-08-24T00:00:00-04:00');return d>=a&&d<b}
+function cayoState(){if(!S.cayoEnd)return'none';if(now()<S.cayoEnd)return'cool';if(S.hardEnd&&now()<S.hardEnd)return'hard';return'normal'}
+function actions(){let a=[],p=(s,x,w)=>a.push({s,x,w}),cs=cayoState(),count=Object.values(S.prep).filter(Boolean).length;
+ if(S.cayoStage==='finale')p(100,'Run the Cayo finale','Your finale is ready; this beats filler work.');
+ if(cs==='hard')p(99,'Start the next Cayo setup now','Your 48-minute Hard Mode setup window is open.');
+ if(S.cayoStage==='intel')p(96,'Finish Gather Intel','Scope the primary target and your best solo loot area.');
+ if(S.cayoStage==='preps'&&count<5)p(95,'Finish the remaining Cayo preps',`${5-count} essential prep${5-count===1?'':'s'} left.`);
+ if(bonusLive()&&S.vipMulti>=5&&left(S.vipEnd)<=0)p(94,'Run 5× VIP Work','The Aug 21–23 bonus is temporary; use it while it is live.');
+ if(left(S.secEnd)<=0)p(80,'Run a fast Security Contract','Good Agency filler while Cayo is unavailable or between VIP Work.');
+ if(!S.dreWeekly)p(76,'Work on the Dr. Dre Contract','Your boosted first host completion for this weekly cycle is still open.');
+ if(cs==='cool')p(72,'Fill the Cayo cooldown','Use Agency/VIP work for the next '+fmt(left(S.cayoEnd))+'.');
+ if((cs==='normal'||cs==='none')&&S.cayoStage==='ready')p(70,'Start a new Cayo run','Cayo is available; begin Gather Intel.');
+ a.sort((x,y)=>y.s-x.s);return a.slice(0,3)}
+function route(){return{air:'Longfin → Airstrip → Drainage Tunnel → office safe → primary target → main gate → southwest swim escape.',north:'Longfin → North Dock → Drainage Tunnel → office safe → primary target → main gate → southwest swim escape.',main:'Longfin → Main Dock → Drainage Tunnel → office safe → primary target → main gate → southwest swim escape.',none:'Longfin → Drainage Tunnel → office safe → primary target → main gate → southwest swim escape.'}[S.lootArea]}
+function buyNext(){if(!S.garment)return'<b>Next:</b> Garment Factory while the GTA+ 60% discount and 2× FIB File benefits are active through September 9.';if(!S.autoshop)return'<b>Next:</b> Auto Shop for more solo contract variety between Cayo runs.';if(!S.nightclub)return'<b>Next:</b> Nightclub for popularity-safe income and utility.';return'<b>Core solo setup is strong.</b> From here, buy properties based on the current weekly bonuses and what you enjoy.'}
+function render(){let cs=cayoState();
+ $('secTimer').textContent=fmt(left(S.secEnd));$('secBadge').textContent=left(S.secEnd)<=0?'READY':'COOLDOWN';$('secBadge').className='badge '+(left(S.secEnd)<=0?'ready':'cool');
+ $('vipTimer').textContent=fmt(left(S.vipEnd));let bl=bonusLive();$('vipBadge').textContent=bl?`${S.vipMulti}× LIVE`:`${S.vipMulti}× SET`;$('vipBadge').className='badge '+(bl&&S.vipMulti>=5?'hot':'info');
+ if(!S.cayoEnd){$('cayoBadge').textContent='READY';$('cayoBadge').className='badge ready';$('cayoTimer').textContent='00:00';$('cayoText').textContent='Ready to start a new run.'}
+ else if(cs==='cool'){$('cayoBadge').textContent='COOLDOWN';$('cayoBadge').className='badge cool';$('cayoTimer').textContent=fmt(left(S.cayoEnd));$('cayoText').textContent='Cooldown is running.'}
+ else if(cs==='hard'){$('cayoBadge').textContent='HARD WINDOW';$('cayoBadge').className='badge hot';$('cayoTimer').textContent=fmt(left(S.hardEnd));$('cayoText').textContent='Start the next setup before this timer ends to lock Hard Mode.'}
+ else{$('cayoBadge').textContent='NORMAL READY';$('cayoBadge').className='badge ready';$('cayoTimer').textContent='00:00';$('cayoText').textContent='Cayo is available; the Hard Mode setup window has passed.'}
+ let n=Object.values(S.prep).filter(Boolean).length;$('prepBadge').textContent=`${n} / 5`;$('routeText').textContent=route();$('buyNext').innerHTML=buyNext();$('dreBadge').textContent=S.dreWeekly?'WEEKLY DONE':'WEEKLY OPEN';$('dreBadge').className='badge '+(S.dreWeekly?'ready':'info');$('stockBadge').textContent=S.stock+'%';$('stockBar').style.width=S.stock+'%';
+ let arr=actions();for(let i=0;i<3;i++){let o=arr[i]||{x:'—',w:''};$(`a${i+1}`).textContent=o.x;$(`w${i+1}`).textContent=o.w}}
+sync();render();setInterval(render,1000);
+</script></body></html>
