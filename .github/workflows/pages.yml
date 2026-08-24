@@ -28,17 +28,21 @@ jobs:
           python - <<'PY'
           from pathlib import Path
 
-          # Red Dead tracker modules
+          # Red Dead tracker modules. Version query prevents iOS Safari from
+          # reopening an older cached JS module after a deploy.
           p = Path('index.html')
           s = p.read_text()
           tags = [
-              '<script src="./naturalist.js"></script>',
-              '<script src="./legendary-advisor.js"></script>',
-              '<script src="./legendary-collection.js"></script>'
+              '<script src="./naturalist.js?v=20260824"></script>',
+              '<script src="./legendary-advisor.js?v=20260824"></script>',
+              '<script src="./legendary-collection.js?v=20260824"></script>',
+              '<script src="./resume-sync.js?v=20260824"></script>'
           ]
-          for tag in tags:
-              if tag not in s:
-                  s = s.replace('</body>', tag + '</body>')
+          # Remove older unversioned/versioned injected copies first.
+          import re
+          for name in ['naturalist.js','legendary-advisor.js','legendary-collection.js','resume-sync.js']:
+              s = re.sub(r'<script src="\./' + re.escape(name) + r'(?:\?v=[^"]*)?"></script>', '', s)
+          s = s.replace('</body>', ''.join(tags) + '</body>')
           p.write_text(s)
 
           # GTA tracker modules
