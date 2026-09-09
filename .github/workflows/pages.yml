@@ -27,21 +27,23 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
 
-          # Red Dead tracker modules. Version query prevents iOS Safari from
-          # reopening an older cached JS module after a deploy.
+          # RDO tracker modules. durable-state loads first so it can restore
+          # persisted state before the feature modules read their localStorage.
           p = Path('index.html')
           s = p.read_text()
-          tags = [
-              '<script src="./naturalist.js?v=20260824"></script>',
-              '<script src="./legendary-advisor.js?v=20260824"></script>',
-              '<script src="./legendary-collection.js?v=20260824"></script>',
-              '<script src="./resume-sync.js?v=20260824"></script>'
+          names = [
+              'durable-state.js',
+              'resume-sync.js',
+              'moonshine-buyers.js',
+              'naturalist.js',
+              'legendary-advisor.js',
+              'legendary-collection.js',
           ]
-          # Remove older unversioned/versioned injected copies first.
-          import re
-          for name in ['naturalist.js','legendary-advisor.js','legendary-collection.js','resume-sync.js']:
+          for name in names:
               s = re.sub(r'<script src="\./' + re.escape(name) + r'(?:\?v=[^"]*)?"></script>', '', s)
+          tags = [f'<script src="./{name}?v=20260909b"></script>' for name in names]
           s = s.replace('</body>', ''.join(tags) + '</body>')
           p.write_text(s)
 
