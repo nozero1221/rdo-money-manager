@@ -1,53 +1,64 @@
 name: Deploy RDO Money Manager
-
 on:
   push:
     branches: ["main"]
   workflow_dispatch:
-
 permissions:
   contents: read
   pages: write
   id-token: write
-
 concurrency:
-  group: "pages"
+  group: pages
   cancel-in-progress: true
-
 jobs:
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Load tracker modules
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test planning and timer calculations
+        run: node --test tests/companion-core.test.mjs
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install browser test tools
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium webkit
+      - name: Test mobile layouts and saved state
+        run: python tests/browser_checks.py
+      - name: Keep browser check results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: companion-browser-checks
+          path: test-results/
+          retention-days: 7
+      - name: Preserve classic tracker and GTA module loading
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
-
-          # RDO tracker modules. durable-state loads first so it can restore
-          # persisted state before the feature modules read their localStorage.
-          p = Path('index.html')
-          s = p.read_text()
-          names = [
-              'durable-state.js',
-              'resume-sync.js',
-              'moonshine-buyers.js',
-              'naturalist.js',
-              'legendary-advisor.js',
-              'legendary-collection.js',
-          ]
-          for name in names:
-              s = re.sub(r'<script src="\./' + re.escape(name) + r'(?:\?v=[^"]*)?"></script>', '', s)
-          tags = [f'<script src="./{name}?v=20260909b"></script>' for name in names]
-          s = s.replace('</body>', ''.join(tags) + '</body>')
-          p.write_text(s)
-
-          # GTA tracker modules
+          # The new RDO entry point loads its own modules. The old source is
+          # preserved separately and still gets the original build-time modules.
+          p = Path('classic.html')
+          if p.exists():
+              s = p.read_text()
+              names = ['durable-state.js', 'resume-sync.js', 'moonshine-buyers.js',
+                       'naturalist.js', 'legendary-advisor.js', 'legendary-collection.js']
+              for name in names:
+                  s = re.sub(r'<script src="\./' + re.escape(name) + r'(?:\?v=[^"]*)?"></script>', '', s)
+              tags = ''.join(f'<script src="./{name}?v=20260909b"></script>' for name in names)
+              p.write_text(s.replace('</body>', tags + '</body>'))
           gta = Path('gta/index.html')
           if gta.exists():
               g = gta.read_text()
